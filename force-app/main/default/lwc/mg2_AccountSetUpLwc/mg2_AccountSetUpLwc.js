@@ -647,7 +647,6 @@ export default class AcctSetUpLWC extends NavigationMixin(LightningElement) {
   }
   
   handleRowSelect(event) {
-    console.log('kyle3');
     if (this.isSamePage) {
       let selRows = event.detail.selectedRows;
       let newList = selRows.map(r => r.Id);
@@ -660,10 +659,6 @@ export default class AcctSetUpLWC extends NavigationMixin(LightningElement) {
       this.oldList = oldListiltered;
       this.allList = this.oldList.concat(newListFiltered);
       this.preSelectedRows = newListFiltered;
-
-      console.log('old : ' + JSON.stringify(this.oldList));
-      console.log('all : ' + JSON.stringify(this.allList));
-
   } else {
       this.oldList = this.allList;
       let preSelect = this.data.map((d) => {
@@ -682,9 +677,6 @@ export default class AcctSetUpLWC extends NavigationMixin(LightningElement) {
       this.oldList = oldListiltered;
       this.preSelectedRows = preSelectFiltered;
       this.allList = this.oldList.concat(preSelectFiltered);
-
-      console.log('old : ' + JSON.stringify(this.oldList));
-      console.log('all : ' + JSON.stringify(this.allList));
   }
   this.isSamePage = true;
   this.recordCnt = this.allList.length;
@@ -724,6 +716,7 @@ export default class AcctSetUpLWC extends NavigationMixin(LightningElement) {
     let selectString = this.allList.join();
     let url = window.location.origin;
     this.vfURL = url + "/apex/Mg2_NASFView?aid=" + this.recordId + "&renderAs=" + "&Mbr_Group__c=" + selectString; 
+    console.log(this.vfURL);
     this.firstPage = false;
     this.secondPage = true;
   }

@@ -2,17 +2,34 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
 import { LightningElement, track, api } from "lwc";
+import findContact from "@salesforce/apex/NASFGroupSelectLightningController.findContactId";
 import { NavigationMixin } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class ZContactpage extends NavigationMixin(LightningElement) {
 
   @api recordId;
-  @api conId;
   @api conError;
   @api acctRelErrorList;
   @track financialType = false;
+  @track conId;
 
+
+  connectedCallback() {
+    this.contactFind();
+  }
+
+  contactFind() {
+    findContact({ recordId: this.recordId })
+      .then(response => {
+        if (response) {
+          this.conId = response;
+        }
+      })
+      .catch(error => {
+        console.error("there is error");
+      });
+  }
 
   showErrorToast() {
     const toastEvent = new ShowToastEvent({

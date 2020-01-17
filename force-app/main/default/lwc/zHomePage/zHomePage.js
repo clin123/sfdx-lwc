@@ -12,18 +12,10 @@
 /* eslint-disable vars-on-top */
 import { LightningElement, track, api } from "lwc";
 import errorCheck from "@salesforce/apex/NASFGroupSelectLightningController.errorCheck";
-import findContact from "@salesforce/apex/NASFGroupSelectLightningController.findContactId";
-import srvAcctSearch from "@salesforce/apex/NASFGroupSelectLightningController.findSrvAcct";
-import CreateCase from "@salesforce/apex/NASFGroupSelectLightningController.CreateCase";
-import flowCheck from "@salesforce/apex/NASFGroupSelectLightningController.flowCheck";
-import sendForm from "@salesforce/apex/NASFGroupSelectLightningController.sendForm";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from "lightning/navigation";
-
 
 export default class zHomePage extends NavigationMixin(LightningElement) {
   @api recordId; //current account record Id
-  @track conId; //primary billing contact record Id
   @track wizardPage = false; //boolean to render wizard page
   @track wizardAcct = false; //boolean to render account record edit page
   @track wizardCon = false; //boolean to render contact record edit page
@@ -34,11 +26,11 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
   @track acctRelErrorList = []; //list of account relationship error message
   @track conErrorList = []; //list of contact error message
   @track errorList = []; //list of all error message
-  @track srvAcctList = []; //list of servicing account for currnet account record
   @track acctError = []; //account error list for forloop 
   @track conError = []; //contact error list for forloop
   @track acctRelError = []; //account relationship error list for forloop
-  @track vfUrl; //url for PDF vf page 
+  @track selectString; //url for PDF vf page 
+  @track allList = [];
 
   //helper map for error list creation
   acctErrorMap = []; 
@@ -47,35 +39,22 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
  
  
  
- 
-  @track indexNum; //validation table row index
-  @track validateId; //selected validation row account record Id
+  //@track srvAcctList = []; //list of servicing account for currnet account record
+  //@track indexNum; //validation table row index
+  //@track validateId; //selected validation row account record Id
+  //@track warningMessage; //warning message for account not eligible for flow
+  //@track validationAcct = false; //boolean to render child componnet for record edit
+  //@track finalButton = true; //boolean to render view setup form button
+  //@track srvAcctIdList = []; //list of servicing account id
 
-  @track warningMessage; //warning message for account not eligible for flow
-
-  @track validationAcct = false; //boolean to render child componnet for record edit
-  @track finalButton = true; //boolean to render view setup form button
-  @track srvAcctIdList = []; //list of servicing account id
-
-  @track flowMessage = false; //boolean to render flow error message
-
-  
 
   // doInit component
   connectedCallback() {
     this.checkError();
-    this.checkFlow();
   }
   
   checkError() {
-    this.errorList = [];
-    this.acctErrorList = [];
-    this.acctRelErrorList = [];
-    this.conErrorList = [];
-    this.acctError = [];
-    this.conError = [];
-    this.acctErrorMap = [];
-    this.conErrorMap = [];
+    this.emptyAllList();
     errorCheck({ recordId: this.recordId })
       .then(response => {
         let details = response;
@@ -85,18 +64,7 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
               this.errorList.push({ value: details[key], key: key });
               this.conErrorList.push({ value: details[key], key: key });
             } else if (key === "MailingAddress") {
-              this.errorList.push({ value: details[key], key: key });
-              this.conErrorList.push({ value: "street", key: "MailingStreet" });
-              this.conErrorList.push({ value: "city", key: "MailingCity" });
-              this.conErrorList.push({ value: "state", key: "MailingState" });
-              this.conErrorList.push({
-                value: "zip",
-                key: "MailingPostalCode"
-              });
-              this.conErrorList.push({
-                value: "country",
-                key: "MailingCountry"
-              });
+              this.pushMailingKeysToConErrorList(details, key);
             } else if (key === "Acct_Rel__c") {
               this.errorList.push({ value: details[key], key: key });
               this.acctRelErrorList.push({ value: details[key], key: key });
@@ -104,31 +72,14 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
               this.errorList.push({ value: details[key], key: key });
               this.acctErrorList.push({ value: details[key], key: key });
             } else if (key === "BillingAddress") {
-              this.errorList.push({ value: details[key], key: key });
-              this.acctErrorList.push({
-                value: "street",
-                key: "BillingStreet"
-              });
-              this.acctErrorList.push({ value: "city", key: "BillingCity" });
-              this.acctErrorList.push({ value: "state", key: "BillingState" });
-              this.acctErrorList.push({
-                value: "zip",
-                key: "BillingPostalCode"
-              });
-              this.acctErrorList.push({
-                value: "country",
-                key: "BillingCountry"
-              });
+              this.pushBillingKeysToAcctErrorList(details, key);
             } else {
               this.errorList.push({ value: details[key], key: key });
               this.acctErrorList.push({ value: details[key], key: key });
             }
           }
         } else {
-          this.errorList = [];
-          this.acctErrorList = [];
-          this.acctRelErrorList = [];
-          this.conErrorList = [];
+          this.emptyAllList();
         }
         if (this.errorList.length > 0) {
           this.wizardPage = true;
@@ -138,9 +89,6 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
           this.mbrPage = false;
         } else {
           this.mbrPage = true;
-          this.srvAcctPage = false;
-          this.searchSrvAcct();
-
         }
 
         for (let i = 0; i < this.acctErrorList.length; i++) {
@@ -183,6 +131,34 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
         console.error("there is error");
       });
   }
+  emptyAllList() {
+    this.errorList = [];
+    this.acctErrorList = [];
+    this.acctRelErrorList = [];
+    this.conErrorList = [];
+    this.acctError = [];
+    this.conError = [];
+    this.acctErrorMap = [];
+    this.conErrorMap = [];
+  }
+
+  pushMailingKeysToConErrorList(details, key) {
+    this.errorList.push({ value: details[key], key: key });
+    this.conErrorList.push({ value: "street", key: "MailingStreet" });
+    this.conErrorList.push({ value: "city", key: "MailingCity" });
+    this.conErrorList.push({ value: "state", key: "MailingState" });
+    this.conErrorList.push({ value: "zip", key: "MailingPostalCode" });
+    this.conErrorList.push({ value: "country", key: "MailingCountry" });
+  }
+
+  pushBillingKeysToAcctErrorList(details, key) {
+    this.errorList.push({ value: details[key], key: key });
+    this.acctErrorList.push({ value: "street", key: "BillingStreet" });
+    this.acctErrorList.push({ value: "city", key: "BillingCity" });
+    this.acctErrorList.push({ value: "state", key: "BillingState" });
+    this.acctErrorList.push({ value: "zip", key: "BillingPostalCode" });
+    this.acctErrorList.push({ value: "country", key: "BillingCountry"});
+  }
 
   cancelDialog() {
     this[NavigationMixin.Navigate]({
@@ -211,12 +187,11 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
     let pageName = event.detail;
     console.log(pageName);
     if(pageName === "validate") {
-        this.srvAcctPage = true;
+        this.mbrPage = true;
     } else if(pageName === "acctRel") {
         this.wizardAcctRel = true;
     } else{
         this.wizardCon = true;
-        this.conId = pageName;
     }
     this.wizardAcct = false;
   }
@@ -226,7 +201,7 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
     if(pageName === "acctRel") {
       this.wizardAcctRel = true;
     } else{
-        this.srvAcctPage = true;
+        this.mbrPage = true;
     }
     this.wizardCon = false;
   }
@@ -241,171 +216,14 @@ export default class zHomePage extends NavigationMixin(LightningElement) {
   }
 
   goPdfpage(event) {
-      this.vfUrl = event.detail;
+      this.allList = event.detail;
+      this.selectString = this.allList.join();
       this.mbrPage = false;
       this.pdfPage = true;
   }
 
-  
-
-
-
-
-  //placeholder for validation piece
-  searchSrvAcct() {
-    srvAcctSearch({ recordId: this.recordId })
-      .then(response => {
-        if (response) {
-          this.srvAcctList = response;
-        }
-      })
-      .catch(error => {
-        console.error("there is error");
-      });
-  }
-
-  validate(event) {
-    this.srvAcctIdList = [];
-    this.validationAcct = false;
-    var index = event.currentTarget.dataset.rowIndex;
-    this.indexNum = index;
-    this.validateId = this.srvAcctList[index].srvAcctId;
-    for (var i = 0; i < this.srvAcctList.length; i++) {
-      this.srvAcctIdList.push({
-        value: this.srvAcctList[i].srvAcctId,
-        key: false
-      });
-    }
-    this.srvAcctIdList[index].key = true;
-    this.validationAcct = true;
-  }
-
-  handleValidation(event) {
-    let isPassed = event.detail;
-    let failCnt = 0;
-    let vList = [];
-
-    for (let i = 0; i < this.srvAcctList.length; i++) {
-      vList.push({
-        srvAcctId: this.srvAcctList[i].srvAcctId,
-        isChecked: this.srvAcctList[i].isChecked,
-        srvAcctName: this.srvAcctList[i].srvAcctName
-      });
-    }
-
-    if (isPassed) {
-      vList[this.indexNum].isChecked = true;
-    }
-    
-    this.srvAcctList = vList;
-
-    for (var i = 0; i < this.srvAcctList.length; i++) {
-      if (!this.srvAcctList[i].isChecked) {
-        failCnt = failCnt + 1;
-      }
-    }
-
-    if (failCnt === 0) {
-      this.finalButton = false;
-    }
-  }
-
-  passedValidation() {
-    this.errorPage = false;
-    this.srvAcctPage = false;
+  goBack(event) {
     this.mbrPage = true;
-    this.firstPage = true;
-    this.secondPage = false;
-    this.wizardPage = false;
-    this.wizardAcct = false;
-    this.wizardCon = false;
-    this.wizardAcctRel = false;
-    this.validationAcct = false;
-    this.Search();
-  }
-
-  checkFlow() {
-    flowCheck({ recordId: this.recordId })
-      .then(response => {
-        if (response) {
-          this.flowMessage = true;
-          this.warningMessage = response;
-        }
-      })
-      .catch(error => {
-        console.error("there is error");
-      });
-  }
-
-  handleLast() {
-    this.statusString = "";
-    this.searchString = "";
-    this.firstPage = true;
-    this.secondPage = false;
-    this.Search();
-  }
-
-  renderPDF() {
-    let url = window.location.origin;
-    let selectString = this.allList.join();
-    let vfUrl = url + "/apex/NASFView?aid=" + this.recordId + "&renderAs=PDF" + "&Mbr_Group__c=" + selectString;
-    window.open(vfUrl);
-  }
-
-  passToConfig() {
-    if (this.allList.length > 0) {
-      CreateCase({ memberGroupIds: this.allList })
-        .then(response => {
-          if (response) {
-            this[NavigationMixin.Navigate]({
-              type: "standard__recordPage",
-              attributes: {
-                recordId: response,
-                objectApiName: "Case",
-                actionName: "view"
-              }
-            });
-          }
-        })
-        .catch(error => {
-          console.error("there is error");
-        });
-    } else {
-      const caseEvent = new ShowToastEvent({
-        title: "Can not Create Case ",
-        message: "Please select at least one member group",
-        variant: "error",
-        mode: "dismissable"
-      });
-      this.dispatchEvent(caseEvent);
-    }
-  }
-
-  sendAcctForm() {
-    if (this.allList.length > 0) {
-      sendForm({ memberGroupIds: this.allList })
-        .then(response => {
-          if (response) {
-            const emailEvent = new ShowToastEvent({
-              title: "Email Sent",
-              message: "New account setup form sent to " + response,
-              variant: "success",
-              mode: "dismissable"
-            });
-            this.dispatchEvent(emailEvent);
-          }
-        })
-        .catch(error => {
-          console.error("there is error");
-        });
-    } else {
-        const caseEvent = new ShowToastEvent({
-          title: "Can not Create Case ",
-          message: "Please select at least one member group",
-          variant: "error",
-          mode: "dismissable"
-    });
-    this.dispatchEvent(caseEvent);
-    }
+    this.pdfPage = false;
   }
 }

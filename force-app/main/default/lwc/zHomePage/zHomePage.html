@@ -8,18 +8,18 @@
                           acct-rel-error-list={acctRelErrorList} onpass={goConPage}></c-z-account-page>
     </template>
     <template if:true={wizardCon}>
-        <c-z-contactpage record-id={recordId} con-id={conId} con-error={conError} 
+        <c-z-contactpage record-id={recordId} con-error={conError} 
                          acct-rel-error-list={acctRelErrorList} onpass={goAcctRelPage}></c-z-contactpage>
     </template>   
     <template if:true={wizardAcctRel}>
         <c-z-acct-rel-page record-id={recordId} onpass={goValidatePage}></c-z-acct-rel-page>
     </template>         
-    <template if:true={srvAcctPage}> validation
+    <template if:true={srvAcctPage}> <!-- PENDING FEATURE-->
     </template>        
     <template if:true={mbrPage}>  
-        <c-z-mbr-page record-id={recordId} onpass={goPdfpage}></c-z-mbr-page>
+        <c-z-mbr-page record-id={recordId} all-list={allList} onpass={goPdfpage} ></c-z-mbr-page>
     </template>
     <template if:true={pdfPage}>
-        <c-z-mbr-page record-id={recordId} vf-url={vfUrl} onpass={goBack}></c-z-mbr-page>
+        <c-z-pdf-page record-id={recordId} select-string={selectString} onpass={goBack}></c-z-pdf-page>
     </template>
 </template>

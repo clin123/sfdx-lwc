@@ -2,7 +2,6 @@
 /* eslint-disable no-empty */
 /* eslint-disable no-unused-vars */
 import { LightningElement, track, api } from "lwc";
-import findContact from "@salesforce/apex/NASFGroupSelectLightningController.findContactId";
 import { NavigationMixin } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
@@ -13,9 +12,6 @@ export default class ZAccountPage extends NavigationMixin(LightningElement) {
   @api conErrorList;
   @api acctRelErrorList;
   @track financialType = false;
-  @track codeId;
-
-
 
   showErrorToast() {
     const toastEvent = new ShowToastEvent({
@@ -37,7 +33,6 @@ export default class ZAccountPage extends NavigationMixin(LightningElement) {
     this.dispatchEvent(toastEvent);
   }
 
-
   cancelDialog() {
     this[NavigationMixin.Navigate]({
       type: "standard__recordPage",
@@ -56,28 +51,6 @@ export default class ZAccountPage extends NavigationMixin(LightningElement) {
     } else {
       this.financialType = false;
     }
-  }
-
-  contactFind() {
-    findContact({ recordId: this.recordId })
-      .then(response => {
-        if (response) {
-          this.conId = response;
-          if (this.conErrorList.length > 0) {
-            const pasEvt = new CustomEvent("pass", { detail: this.conId });
-            this.dispatchEvent(pasEvt);
-          } else if (this.acctRelErrorList.length > 0) {
-              const pasEvt = new CustomEvent("pass", { detail: "acctRel"  });
-              this.dispatchEvent(pasEvt);
-          } else {
-              const pasEvt = new CustomEvent("pass", { detail: "validate" });
-              this.dispatchEvent(pasEvt);
-          }
-        }
-      })
-      .catch(error => {
-        console.error("there is error");
-      });
   }
 
   saveAcct(event) {     
@@ -158,7 +131,16 @@ export default class ZAccountPage extends NavigationMixin(LightningElement) {
   }
 
   acctSuccess() {
-    this.contactFind();
+    if (this.conErrorList.length > 0) {
+      const pasEvt = new CustomEvent("pass", { detail: "contact" });
+      this.dispatchEvent(pasEvt);
+    } else if (this.acctRelErrorList.length > 0) {
+        const pasEvt = new CustomEvent("pass", { detail: "acctRel"  });
+        this.dispatchEvent(pasEvt);
+    } else {
+        const pasEvt = new CustomEvent("pass", { detail: "validate" });
+        this.dispatchEvent(pasEvt);
+    }
     this.showAcctToast();  
   }
 }

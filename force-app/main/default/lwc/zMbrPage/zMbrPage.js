@@ -7,6 +7,8 @@
 /* eslint-disable @lwc/lwc/no-async-operation */
 import { LightningElement, track, api } from "lwc";
 import searchMbr from "@salesforce/apex/NASFGroupSelectLightningController.filterMbrGroup";
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { NavigationMixin } from "lightning/navigation";
 
 const columns = [
     { label: "GROUP NAME", fieldName: "Name__c", type: "text", sortable: true, cellAttribute: { alignment: "left" } },
@@ -19,7 +21,7 @@ const columns = [
   ];
 
 
-export default class ZMbrPage extends LightningElement {
+export default class ZMbrPage extends NavigationMixin(LightningElement) {
   @api recordId;
   @track columns = columns; //holds column info
   @track data = []; //data to be display in the table
@@ -29,9 +31,9 @@ export default class ZMbrPage extends LightningElement {
   @track totalPage = 0; //total number of page is needed to display all records
   @track recordCnt = 0; //total count for selected member group
   @track statusDefault = "";
-  @track allList = []; //list of all the selected memeber group
+  @api allList; //list of all the selected memeber group
   @track oldList = []; //list of all selected member group without current view page record
-  @track preSelectedRows; //preselected row for member group checkbox
+  @track preSelectedRows = []; //preselected row for member group checkbox
   @track page = 1; //this is initialize for 1st page
   @track startingRecord = 1; //start record position per page
   @track pageSize = 20; //default value we are assigning
@@ -47,6 +49,17 @@ export default class ZMbrPage extends LightningElement {
 
   connectedCallback() {
     this.Search();
+  }
+
+  cancelDialog() {
+    this[NavigationMixin.Navigate]({
+      type: "standard__recordPage",
+      attributes: {
+        recordId: this.recordId,
+        objectApiName: "Account",
+        actionName: "view"
+      }
+    });
   }
     
   SearchKeyDelay() {
@@ -220,10 +233,7 @@ export default class ZMbrPage extends LightningElement {
   }
 
   getSelectedRecords() {
-    let selectString = this.allList.join();
-    let url = window.location.origin;
-    let vfURL = url + "/apex/Mg2_NASFView?aid=" + this.recordId + "&renderAs=" + "&Mbr_Group__c=" + selectString;
-    const pasEvt = new CustomEvent("pass", { detail: vfURL  });
+    const pasEvt = new CustomEvent("pass", { detail: this.allList  });
     this.dispatchEvent(pasEvt);
   }
 }
