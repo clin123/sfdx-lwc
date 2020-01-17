@@ -1,0 +1,25 @@
+<template>
+    <template if:true={wizardPage}>
+        <c-z-wizard-page record-id={recordId} error-list={errorList} acct-error-list={acctErrorList} con-error-list={conErrorList} 
+                         acct-rel-error-list={acctRelErrorList} onpass={goAcctPage}></c-z-wizard-page>
+    </template>  
+    <template if:true={wizardAcct}>
+        <c-z-account-page record-id={recordId} acct-error={acctError} con-error-list={conErrorList} 
+                          acct-rel-error-list={acctRelErrorList} onpass={goConPage}></c-z-account-page>
+    </template>
+    <template if:true={wizardCon}>
+        <c-z-contactpage record-id={recordId} con-id={conId} con-error={conError} 
+                         acct-rel-error-list={acctRelErrorList} onpass={goAcctRelPage}></c-z-contactpage>
+    </template>   
+    <template if:true={wizardAcctRel}>
+        <c-z-acct-rel-page record-id={recordId} onpass={goValidatePage}></c-z-acct-rel-page>
+    </template>         
+    <template if:true={srvAcctPage}> validation
+    </template>        
+    <template if:true={mbrPage}>  
+        <c-z-mbr-page record-id={recordId} onpass={goPdfpage}></c-z-mbr-page>
+    </template>
+    <template if:true={pdfPage}>
+        <c-z-mbr-page record-id={recordId} vf-url={vfUrl} onpass={goBack}></c-z-mbr-page>
+    </template>
+</template>

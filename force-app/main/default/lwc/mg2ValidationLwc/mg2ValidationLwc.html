@@ -1,0 +1,231 @@
+<template>
+    <template if:true={errorPage}>
+        <template if:true={wizardPage}>
+            <lightning-card>
+                <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+                    <div class="slds-p-right_x-large">
+                        <lightning-icon icon-name="utility:error" title="Error!"  variant="error" size="large"></lightning-icon>
+                    </div>
+                    <div class=" slds-text-color_destructive">
+                        <p>Required fields for New Account Setup Form are missing.<br/>
+                            Click Start Wizard to start Account Setup Form Wizard to edit the missing data<br/>
+                            or click cancel to go back to the previous page
+                        </p>
+                    </div>
+                </div>                     
+            </lightning-card>
+            <lightning-card class="slds-size--1-of-1 ">
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer  slds-p-left_xx-large slds-p-right_xx-large" role="grid">
+                    <thead>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Product">Field API Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Subscription">Description </div>
+                            </th>                       
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <template for:each={errorList} for:item="e">
+                            <tr key={e.key}>
+                                <th scope="row">
+                                    <div class="slds-truncate" title={e.key}>{e.key}</div>
+                                </th> 
+                                <th scope="row">
+                                    <div class="slds-truncate" title={e.value}>{e.value}</div>
+                                </th> 
+                            </tr>
+                        </template>                          
+                    </tbody>
+                </table>
+                <div class="slds-align_absolute-center slds-p-top_xx-large slds-p-right_xx-large">
+                    <lightning-button variant="brand" type="submit" name="save" label="Start Wizard" onclick={startWiz}></lightning-button>
+                </div>                         
+            </lightning-card>
+        </template>
+        <template if:true={wizardAcct}>
+            <lightning-card>
+                <lightning-card class="slds-size--1-of-1 ">                                         
+                    <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+                        <div class="slds-p-right_x-large">
+                            <lightning-icon icon-name="action:new_account" variant="warning"></lightning-icon>
+                        </div>
+                        <div> 
+                            <h1 class="slds-text-heading--medium">UPDATE ACCOUNT RECORD FIELDS</h1>							
+                        </div>
+                    </div> 
+                    <div class="slds-grid slds-wrap slds-align_absolute-center slds-p-top_large">
+                        Please update the following missing field from NASF account setup form
+                    </div>
+                </lightning-card>
+                <lightning-card class="slds-p-left_xx-large slds-p-right_xx-large">
+                        <lightning-record-edit-form
+                                                  data-id="editAccountForm"
+                                                  record-id={recordId}
+                                                  onsubmit={saveAcct}
+                                                  onsuccess={acctSuccess}
+                                                  record-type-id={acctRecordType}
+                                                  object-api-name="Account">                    
+                            <lightning-card class="slds-size--1-of-1 ">                      
+                                <div class="slds-grid slds-wrap slds-align_absolute-center">
+                                    <lightning-input-field field-name= "Name" variant="label-stacked" disabled class="slds-size--2-of-3 slds-p-horizontal_x-small"></lightning-input-field>
+                                    <template for:each={acctError} for:item="e"> 
+                                        <div key={e.key} class="slds-size--2-of-3 slds-p-horizontal_x-small slds-align_absolute-center">
+                                            <template if:true={e.isFriendly}>
+                                                <lightning-input-field data-id="acctName" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                            </template>
+                                            <template if:true={e.isAcctType}>  
+                                                <lightning-input-field data-id="acctType" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                            </template>
+                                            <template if:true={e.isBillingCon}>  
+                                                <lightning-input-field data-id="acctContact" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                            </template>
+                                            <template if:true={e.isPayTerm}>  
+                                                <lightning-input-field data-id="payTerms" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                            </template>
+                                            <template if:true={e.isPhone}>  
+                                                <lightning-input-field data-id="acctPhone" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                            </template>
+                                            <template if:true={e.isAcctMgr}>  
+                                                <lightning-input-field data-id="acctMgr" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                            </template>
+                                            <template if:true={e.isInvoice}>  
+                                                <lightning-input-field data-id="acctInvoice" field-name= {e.api} variant="label-stacked" onchange={handleTypeChange}></lightning-input-field>                
+                                            </template>                                   
+                                            <template if:true={e.isStreet}>  
+                                                <lightning-input-field data-id="street" field-name= {e.api} variant="label-stacked"></lightning-input-field>                
+                                            </template>       
+                                            <template if:true={e.isCity}>  
+                                                <lightning-input-field data-id="city" field-name= {e.api} variant="label-stacked"></lightning-input-field>                
+                                            </template>    
+                                            <template if:true={e.isState}>  
+                                                <lightning-input-field data-id="state" field-name= {e.api} variant="label-stacked"></lightning-input-field>                
+                                            </template>    
+                                            <template if:true={e.isZip}>  
+                                                <lightning-input-field data-id="zip" field-name= {e.api} variant="label-stacked"></lightning-input-field>                
+                                            </template>    
+                                            <template if:true={e.isCountry}>  
+                                                <lightning-input-field data-id="country" field-name= {e.api} variant="label-stacked"></lightning-input-field>                
+                                            </template>                                                  
+                                        </div>                         
+                                    </template> 
+                                    <template if:true={financialType}>
+                                        <div class="slds-size--2-of-3 slds-p-horizontal_x-small slds-align_absolute-center">
+                                            <lightning-input-field data-id="type" field-name="Client_Channel_Segment__c" variant="label-stacked"></lightning-input-field>
+                                        </div>                 
+                                    </template>        
+                                </div>
+                            </lightning-card>
+                        </lightning-record-edit-form>
+                        <div class="slds-m-top_medium modal-footer slds-modal__footer slds-size_1-of-1">
+                            <lightning-button variant="brand" type="submit" name="save" label="Save and Next" onclick={saveAcct}></lightning-button> 
+                        </div> 
+                    </lightning-card>
+                </lightning-card>
+        </template>
+        <template if:true={wizardCon}>
+            <lightning-card>
+                <lightning-card class="slds-size--1-of-1 ">                                         
+                    <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+                        <div class="slds-p-right_x-large">
+                            <lightning-icon icon-name="action:email" variant="warning"></lightning-icon>
+                        </div>
+                        <div> 
+                            <h1 class="slds-text-heading--medium">VALIDATE EMAIL FOR PRIMARY BILLING CONTACT</h1>							
+                        </div>
+                    </div>                     
+                </lightning-card>
+                <lightning-card class="slds-p-left_xx-large slds-p-right_xx-large">
+                    <lightning-record-edit-form
+                                              data-id="editContactForm"
+                                              record-id={conId}
+                                              onsubmit={saveCont}
+                                              onsuccess={contSuccess}
+                                              object-api-name="Contact">                                         
+                        <lightning-card class="slds-size--1-of-1 ">                                                 
+                            <div class="slds-grid slds-wrap slds-align_absolute-center">
+                                <lightning-input-field field-name= "FirstName" variant="label-stacked" disabled class="slds-size--1-of-3 slds-p-horizontal_x-small"></lightning-input-field>               
+                                <lightning-input-field field-name= "LastName" variant="label-stacked" disabled class="slds-size--1-of-3 slds-p-horizontal_x-small" ></lightning-input-field>                              
+                                <template for:each={conError} for:item="e"> 
+                                    <div key={e.key} class="slds-size--2-of-3 slds-p-horizontal_x-small slds-align_absolute-center">                       	                                    
+                                        <template if:true={e.isEmail}>
+                                            <lightning-input-field data-id="emailCon" field-name="Email" variant="label-stacked" ></lightning-input-field>                
+                                        </template>
+                                        <template if:true={e.isStreet}>  
+                                            <lightning-input-field data-id="streetCon" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                        </template>
+                                        <template if:true={e.isCity}>  
+                                            <lightning-input-field data-id="cityCon" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                        </template>
+                                        <template if:true={e.isState}>  
+                                            <lightning-input-field data-id="stateCon" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                        </template>
+                                        <template if:true={e.isZip}>  
+                                            <lightning-input-field data-id="zipCon" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                        </template>
+                                        <template if:true={e.isCountry}>  
+                                            <lightning-input-field data-id="countryCon" field-name= {e.api} variant="label-stacked" ></lightning-input-field>                
+                                        </template>
+                                        </div>
+                                    </template>
+                            </div>
+                        </lightning-card>
+                    </lightning-record-edit-form>
+                    <div class="slds-m-top_medium modal-footer slds-modal__footer slds-size_1-of-1">
+                        <lightning-button variant="brand" type="submit" name="save" label="Save and Next" onclick={saveCont}></lightning-button>
+                    </div> 
+                </lightning-card>
+            </lightning-card>
+        </template>
+        <template if:true={wizardAcctRel}>    
+            <lightning-card>
+                <lightning-card class="slds-size--1-of-1 ">                                         
+                    <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+                        <div class="slds-p-right_x-large">
+                            <lightning-icon icon-name="action:join_group" variant="warning"></lightning-icon>
+                        </div>
+                        <div> 
+                            <h1 class="slds-text-heading--medium">CREATE NEW CONTRACTEE RELATIONSHIP</h1>							
+                        </div>                       
+                    </div> 
+                    <div class="slds-grid slds-wrap slds-align_absolute-center slds-p-top_large">
+                        At least one Contractee Relationship is required for the selected account
+                    </div>                    
+                </lightning-card>
+                <lightning-card class="slds-p-left_xx-large slds-p-right_xx-large">
+                    <lightning-record-edit-form
+                                              data-id="editAcctRelForm"
+                                              onsubmit={saveActtRel}
+                                              onsuccess={acctRelSuccess}
+                                              record-type-id={acctRelRecordType}
+                                              object-api-name="Acct_Rel__c">                      
+                        <lightning-card class="slds-size--1-of-1">                      
+                            <div class="slds-grid slds-wrap ">
+                                <h2 class="slds-text-heading--small slds-size--1-of-1 slds-p-horizontal_x-small">Information</h2>
+                                <lightning-input-field required field-name="Svc_Acct__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field>  
+                                <lightning-input-field field-name="Start_Date__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field> 
+                                <lightning-input-field disabled field-name="Relationship_Type__c" value="Contractee" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field> 
+                                <lightning-input-field field-name="End_Date__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field>
+                                <lightning-input-field required field-name="Contract_Type__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field> 
+                                <lightning-input-field field-name="OwnerId" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field>
+                                <lightning-input-field field-name="Benefit_Sponsor__c" value={recordId} variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field> 
+                                <lightning-input-field field-name="Line_of_Business__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field>
+                            </div>
+                        </lightning-card>
+                        <lightning-card class="slds-size--1-of-1">                      
+                            <div class="slds-grid slds-wrap ">
+                                <h2 class="slds-text-heading--small slds-size--1-of-1 slds-p-horizontal_x-small">System Information</h2> 
+                                <lightning-input-field field-name="Composite_Key__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field>  
+                                <lightning-input-field field-name="Legacy_Id__c" variant="label-stacked" class=" slds-size--1-of-2 slds-p-horizontal_x-small"></lightning-input-field>
+                            </div>
+                        </lightning-card>
+                    </lightning-record-edit-form>
+                    <div class="slds-m-top_medium modal-footer slds-modal__footer slds-size_1-of-1">
+                        <lightning-button variant="brand" type="submit" name="save" label="Save and Validate" onclick={saveActtRel}></lightning-button>
+                    </div> 
+                </lightning-card>
+            </lightning-card>
+        </template>  
+    </template>
+</template>

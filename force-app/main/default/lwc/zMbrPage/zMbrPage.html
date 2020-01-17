@@ -1,0 +1,52 @@
+<template>
+    <lightning-card >
+        <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+            <div class="slds-p-right_x-large">
+                <lightning-icon icon-name="action:new_lead" alternative-text="Approved"></lightning-icon>
+            </div>
+            <div>
+                <h1 class="slds-text-heading--medium">NASF FORM GROUP SELECTION</h1>
+            </div>
+        </div> 
+        <div class="slds-grid slds-p-horizontal_xx-large">
+            <div class="slds-col">
+            </div>
+            <div class="slds-col">              
+                <lightning-input data-id="searchInput" name="searchInput" label="Name/Id Search" type="search" onchange={SearchKeyDelay}></lightning-input>  
+            </div>           
+            <div class="slds-col">      
+                <lightning-layout-item size="4">
+                    <lightning-combobox  data-id="select" value={statusDefault} name="select" label="Status Filter" options={statusOptions} onchange={Search}></lightning-combobox>   
+                </lightning-layout-item>
+            </div>
+            <div class="slds-col">
+            </div>
+        </div>
+        <div class="slds-p-around_medium slds-p-top_xx-large">
+            <h1 class="slds-text-heading--large">Member Groups</h1> <p>  Total Selected Record: {recordCnt}</p>
+            <br/>       
+            <lightning-datatable key-field="Id"
+                                 data={data}
+                                 onsort={handleSort}
+                                 sort-by={sortedField}
+                                 sorted-direction={sortDirection}
+                                 onrowselection={handleRowSelect}
+                                 columns={columns}
+                                 selected-rows={preSelectedRows}>
+                                </lightning-datatable>         
+            <br/>
+            <div class="slds-m-around_medium slds-align_absolute-center">   
+                <p class="slds-m-vertical_medium content">
+                         Displaying {startingRecord} to {endingRecord} of {totalRecountCount} records.
+                         Page {page} of {totalPage}. </p>
+            </div>
+            <div class="slds-m-around_medium slds-align_absolute-center">   
+                <c-sorting2-button onprevious={previousHandler} onnext={nextHandler}></c-sorting2-button>
+            </div>       
+        </div>                  
+            <div class="slds-m-top_medium modal-footer slds-modal__footer slds-size_1-of-1">
+                <lightning-button variant="Neutral" label="Cancel" onclick={cancelDialog}></lightning-button>        
+                <lightning-button variant="brand" label="View Setup Form" onclick={getSelectedRecords}></lightning-button>
+            </div>               
+    </lightning-card> 
+</template>

@@ -1,0 +1,45 @@
+<template>
+        <lightning-card>
+            <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+                <div class="slds-p-right_x-large">
+                    <lightning-icon icon-name="utility:error" title="Error!"  variant="error" size="large"></lightning-icon>
+                </div>
+                <div class=" slds-text-color_destructive">
+                    <p>Required fields for New Account Setup Form are missing.<br/>
+                        Click Start Wizard to start Account Setup Form Wizard to edit the missing data<br/>
+                        or click cancel to go back to the previous page
+                    </p>
+                </div>
+            </div>                     
+        </lightning-card>
+        <lightning-card class="slds-size--1-of-1 ">
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer  slds-p-left_xx-large slds-p-right_xx-large" role="grid">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th scope="col">
+                            <div class="slds-truncate" title="Product">Field API Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Subscription">Description </div>
+                        </th>                       
+                    </tr>
+                </thead>
+                <tbody >
+                    <template for:each={errorList} for:item="e">
+                        <tr key={e.key}>
+                            <th scope="row">
+                                <div class="slds-truncate" title={e.key}>{e.key}</div>
+                            </th> 
+                            <th scope="row">
+                                <div class="slds-truncate" title={e.value}>{e.value}</div>
+                            </th> 
+                        </tr>
+                    </template>                          
+                </tbody>
+            </table>
+            <div class="slds-align_absolute-center slds-p-top_xx-large slds-p-right_xx-large">
+                <lightning-button variant="neutral" label="Cancel" onclick={cancelDialog}></lightning-button>                             
+                <lightning-button variant="brand" type="submit" name="save" label="Start Wizard" onclick={startWiz}></lightning-button>
+            </div>                         
+        </lightning-card>
+    </template>

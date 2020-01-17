@@ -1,0 +1,53 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "c/zWizardPage": [
+                "zWizardPage/zWizardPage.js"
+            ],
+            "c/zHomePage": [
+                "zHomePage/zHomePage.js"
+            ],
+            "c/mg2_NASFLngOutLwc": [
+                "mg2_NASFLngOutLwc/mg2_NASFLngOutLwc.js"
+            ],
+            "c/zAccountPage": [
+                "zAccountPage/zAccountPage.js"
+            ],
+            "c/mg2ValidationLwc": [
+                "mg2ValidationLwc/mg2ValidationLwc.js"
+            ],
+            "c/mg2_AccountSetUpLwc": [
+                "mg2_AccountSetUpLwc/mg2_AccountSetUpLwc.js"
+            ],
+            "c/zMbrPage": [
+                "zMbrPage/zMbrPage.js"
+            ],
+            "c/zAcctRelPage": [
+                "zAcctRelPage/zAcctRelPage.js"
+            ],
+            "c/mg2SortingLwc": [
+                "mg2SortingLwc/mg2SortingLwc.js"
+            ],
+            "c/mg2ValidationLngOut": [
+                "mg2ValidationLngOut/mg2ValidationLngOut.js"
+            ],
+            "c/zPdfPage": [
+                "zPdfPage/zPdfPage.js"
+            ],
+            "c/zContactpage": [
+                "zContactpage/zContactpage.js"
+            ]
+        }
+    },
+    "include": [
+        "**/*",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jest"
+        ]
+    }
+}

@@ -1,0 +1,35 @@
+<template>
+    <lightning-card>
+        <div class="slds-m-top_medium slds-size_1-of-1 slds-align_absolute-center slds-p-bottom_x-large">
+            <lightning-button variant="brand" label="Previous Page" onclick={handleLast} class="slds-p-left_x-small slds-p-right_x-small"></lightning-button>
+            <lightning-button variant="brand" label="Send to Me" title="Send email to Me" onclick={sendAcctForm} class="slds-p-left_x-small slds-p-right_x-small"></lightning-button>                     
+            <lightning-button variant="brand" label="Pass to Configuration" title="Pass to config and open case in new tab" onclick={passToConfig} class="slds-p-left_x-small slds-p-right_x-small"></lightning-button>                       
+            <lightning-button variant="brand" label="Preview PDF" title="Open as PDF in new tab for Download/Preview" onclick={renderPDF}></lightning-button>                                                                              
+            <lightning-button variant="Neutral" label="Cancel" title="Base action" onclick={cancelDialog} class="slds-p-left_x-small slds-p-right_x-small"></lightning-button>                            
+        </div> 
+        <template if:true={flowMessage}>
+            <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color:  #ff8080">
+                <div>
+                    <lightning-icon icon-name="utility:warning" alternative-text="Warning!" variant="warning"></lightning-icon>
+                </div>
+                <div>
+                    <p>Warning</p>
+                    <p>{warningMessage}</p>
+                </div>
+            </div> 
+        </template> 
+        <div class="slds-grid slds-wrap slds-align_absolute-center" style="background-color: #FFFACD">
+            <div class="slds-p-right_x-large">
+                <lightning-icon icon-name="action:new_notebook" alternative-text="Approved"></lightning-icon>
+            </div>
+            <div>
+                <h1 class="slds-text-heading--medium">NASF FORM PDF PREVIEW</h1>
+            </div>
+        </div>       
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size--1-of-1">
+                <iframe src={vfUrl} id="showskill" height="1000px" width="100%"> </iframe>               
+            </div>                      
+        </div>
+    </lightning-card>
+</template>

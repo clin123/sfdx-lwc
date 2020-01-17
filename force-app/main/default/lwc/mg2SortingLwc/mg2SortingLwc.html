@@ -1,0 +1,14 @@
+<template>
+    <lightning-layout>
+        <div class="slds-align_absolute-center">   
+
+        <lightning-layout-item class="slds-p-left_x-small slds-p-right_x-small">
+            <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={previousHandler}></lightning-button>
+        </lightning-layout-item>
+        <lightning-layout-item flexibility="grow"></lightning-layout-item>
+        <lightning-layout-item class="slds-p-left_x-small slds-p-right_x-small">
+            <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler}></lightning-button>
+        </lightning-layout-item>
+        </div>
+    </lightning-layout>
+</template>
