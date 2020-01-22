@@ -4,7 +4,7 @@
                 <div class="slds-p-right_x-large">
                     <lightning-icon icon-name="utility:error" title="Error!"  variant="error" size="large"></lightning-icon>
                 </div>
-                <div class=" slds-text-color_destructive">
+                <div data-id="promptMsg" class=" slds-text-color_destructive">
                     <p>Required fields for New Account Setup Form are missing.<br/>
                         Click Start Wizard to start Account Setup Form Wizard to edit the missing data<br/>
                         or click cancel to go back to the previous page
@@ -38,8 +38,8 @@
                 </tbody>
             </table>
             <div class="slds-align_absolute-center slds-p-top_xx-large slds-p-right_xx-large">
-                <lightning-button variant="neutral" label="Cancel" onclick={cancelDialog}></lightning-button>                             
-                <lightning-button variant="brand" type="submit" name="save" label="Start Wizard" onclick={startWiz}></lightning-button>
+                <lightning-button data-id="cancelButton" variant="neutral" label="Cancel" onclick={cancelDialog}></lightning-button>                             
+                <lightning-button data-id="startButton" variant="brand" type="submit" name="save" label="Start Wizard" onclick={startWiz}></lightning-button>
             </div>                         
         </lightning-card>
     </template>

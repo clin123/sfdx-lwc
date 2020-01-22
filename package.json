@@ -1,0 +1,26 @@
+{
+  "name": "sfdx-lightning",
+  "version": "1.0.0",
+  "description": "This guide helps Salesforce developers who are new to Visual Studio Code go from zero to a deployed app using Salesforce Extensions for VS Code and Salesforce CLI.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@salesforce/sfdx-lwc-jest": "^0.6.2"
+  },
+  "scripts": {
+    "test:unit": "lwc-jest",
+    "test:unit:watch": "lwc-jest --watch",
+    "test:unit:debug": "lwc-jest --debug",
+    "test:unit:coverage": "lwc-jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clin123/sfdx-lwc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/clin123/sfdx-lwc/issues"
+  },
+  "homepage": "https://github.com/clin123/sfdx-lwc#readme"
+}

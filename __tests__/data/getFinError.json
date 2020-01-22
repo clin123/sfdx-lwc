@@ -1,0 +1,16 @@
+[{
+    "api": "Receives_Invoice__c",
+    "key" : "Receives_Invoice__c",
+     "isFriendly": false,
+     "isAcctType" : false,
+     "isBillingCon" : false,
+     "isPayTerm" : false,
+     "isPhone" : false,
+     "isAcctMgr" : false,
+     "isInvoice" : true,
+     "isStreet" : false,
+     "isCity" : false,
+     "isState" : false,
+     "isZip" : false,
+     "isCountry" : false
+   }]

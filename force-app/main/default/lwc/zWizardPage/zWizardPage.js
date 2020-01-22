@@ -7,6 +7,7 @@ export default class ZWizardPage extends NavigationMixin(LightningElement) {
   @api conErrorList;
   @api acctRelErrorList;
   @api recordId;
+  
   cancelDialog() {
     this[NavigationMixin.Navigate]({
       type: "standard__recordPage",

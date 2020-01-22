@@ -241,8 +241,8 @@ export default class AcctSetUpLWC extends NavigationMixin(LightningElement) {
   }
 
   handleTypeChange(event) {
-    let isYes = event.detail.value;
-    if (isYes === "Yes") {
+    //let isYes = event.detail.value; 
+    if (event.detail.value === "Yes") {
       this.financialType = true;
     } else {
       this.financialType = false;
